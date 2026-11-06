@@ -1,0 +1,402 @@
+<!doctype html>
+<html lang="eu">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+<title>Transformazio-zentroa VR</title>
+<meta name="description" content="Transformazio-zentro bateko deskargoaren simulazioa: 5 urrezko arauak. Three.js + WebXR.">
+<style>
+:root{--bg:#1b1f24;--fg:#eef1f5;--muted:#aab3c0;--panel:rgba(18,22,28,.86);--accent:#6aa9ec;--ok:#7cc47f;--ko:#ff6b5e;--warn:#f0b44c}
+html,body{margin:0;height:100%;overflow:hidden;background:var(--bg);color:var(--fg);font:15px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+canvas{display:block}
+#hud{position:fixed;left:12px;top:12px;max-width:min(360px,calc(100vw - 24px));background:var(--panel);border:1px solid #333b47;border-radius:10px;padding:10px 14px;pointer-events:auto}
+#hud h1{font-size:15px;margin:0 0 4px;color:var(--accent)}
+#step{font-size:17px;font-weight:650;margin:2px 0}
+#hint{color:var(--muted);margin:2px 0 6px}
+#stat{display:flex;flex-wrap:wrap;gap:6px;font-size:13px}
+.chip{border:1px solid #3a4350;border-radius:999px;padding:1px 9px}
+.on{border-color:var(--ok);color:var(--ok)}
+#msg{margin-top:6px;min-height:1.4em;font-weight:600}
+#msg.ok{color:var(--ok)}#msg.ko{color:var(--ko)}#msg.warn{color:var(--warn)}
+#btns{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap}
+button.b{background:#2a313b;color:var(--fg);border:1px solid #46505e;border-radius:8px;padding:5px 10px;font:inherit;cursor:pointer}
+button.b:hover{background:#343c48}
+#flash{position:fixed;inset:0;pointer-events:none;background:#fff3c4;opacity:0;transition:opacity .6s}
+#end{position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,.6)}
+#end .card{background:#1f252d;border:1px solid #3a4350;border-radius:12px;padding:20px 24px;max-width:420px;margin:16px}
+#end h2{margin:0 0 8px;color:var(--ok)}
+#info{position:fixed;right:12px;bottom:12px;font-size:12px;color:var(--muted);background:var(--panel);padding:4px 10px;border-radius:8px}
+@media (max-width:520px){#hud{font-size:13px}#step{font-size:15px}}
+</style>
+<script type="importmap">
+{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"}}
+</script>
+</head>
+<body>
+<div id="hud" role="status" aria-live="polite">
+  <h1>Transformazio-zentroa · Deskargoa</h1>
+  <div id="step"></div>
+  <div id="hint"></div>
+  <div id="stat"></div>
+  <div id="msg"></div>
+  <div id="btns">
+    <button class="b" id="bLabels" aria-pressed="true">Etiketak: bai</button>
+    <button class="b" id="bReset">Berriro hasi</button>
+  </div>
+</div>
+<div id="flash"></div>
+<div id="end"><div class="card"><h2>Deskargoa eginda ✔</h2><div id="report"></div><div id="btns2" style="margin-top:12px"><button class="b" id="bAgain">Berriro egin</button></div></div></div>
+<div id="info">Klik/ukitu objektuetan · arrastatu biratzeko · VR: kontroladorearen katua</div>
+
+<script type="module">
+import * as THREE from 'three';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+import { VRButton } from 'three/addons/webxr/VRButton.js';
+
+// ---------- eszena ----------
+const renderer = new THREE.WebGLRenderer({ antialias: true });
+renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+renderer.setSize(innerWidth, innerHeight);
+renderer.xr.enabled = true;
+document.body.appendChild(renderer.domElement);
+const vrBtn = VRButton.createButton(renderer);
+document.body.appendChild(vrBtn);
+const VRTXT = { 'ENTER VR': 'VR-n sartu', 'EXIT VR': 'VR-tik irten', 'VR NOT SUPPORTED': 'VR ez dago erabilgarri', 'VR NOT ALLOWED': 'VR ez dago baimenduta', 'WEBXR NOT AVAILABLE': 'WebXR ez dago erabilgarri' };
+new MutationObserver(() => { const t = VRTXT[vrBtn.textContent.trim()]; if (t) vrBtn.textContent = t; }).observe(vrBtn, { childList: true, characterData: true, subtree: true });
+
+const scene = new THREE.Scene();
+const BG = new THREE.Color(0x1b1f24);
+scene.background = BG.clone();
+const camera = new THREE.PerspectiveCamera(70, innerWidth / innerHeight, 0.05, 50);
+camera.position.set(0.2, 1.65, 1.6);
+const controls = new OrbitControls(camera, renderer.domElement);
+controls.target.set(0.2, 1.0, -1.2);
+controls.minDistance = 0.6; controls.maxDistance = 3.6;
+controls.maxPolarAngle = Math.PI * 0.58;
+controls.enableDamping = true;
+controls.update();
+
+scene.add(new THREE.HemisphereLight(0xcfd8e6, 0x2a2420, 0.55));
+const lamp = new THREE.PointLight(0xfff1d6, 18, 9, 1.6); lamp.position.set(0, 2.7, -0.6); scene.add(lamp);
+const arcLight = new THREE.PointLight(0xffb347, 0, 6, 1.4); scene.add(arcLight);
+
+const M = (c, o = {}) => new THREE.MeshStandardMaterial({ color: c, roughness: .75, metalness: .1, ...o });
+function box(w, h, d, mat, x, y, z, parent = scene) {
+  const m = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), mat); m.position.set(x, y, z); parent.add(m); return m;
+}
+function cyl(r, h, mat, x, y, z, parent = scene) {
+  const m = new THREE.Mesh(new THREE.CylinderGeometry(r, r, h, 20), mat); m.position.set(x, y, z); parent.add(m); return m;
+}
+
+// gela (4 × 2,8 × 4,4 m)
+box(4.4, .02, 4.6, M(0x5d6066), 0, -.01, -.3);
+box(4.4, 2.8, .05, M(0x8a8f96), 0, 1.4, -2.6);
+box(.05, 2.8, 4.6, M(0x7f848b), -2.2, 1.4, -.3);
+box(.05, 2.8, 4.6, M(0x7f848b), 2.2, 1.4, -.3);
+box(4.4, .05, 4.6, M(0x6c7077), 0, 2.8, -.3);
+// aireztapen-saretak
+for (let i = 0; i < 6; i++) box(.9, .025, .02, M(0x3d4045), 1.55, 2.2 + i * .06, -2.57);
+
+// ---------- etiketak ----------
+const labels = [];
+function label(text, x, y, z, size = .11) {
+  const c = document.createElement('canvas'); const ctx = c.getContext('2d');
+  ctx.font = '600 44px system-ui,sans-serif';
+  const w = Math.ceil(ctx.measureText(text).width) + 36; c.width = w; c.height = 64;
+  ctx.font = '600 44px system-ui,sans-serif';
+  ctx.fillStyle = 'rgba(15,20,28,.85)'; ctx.beginPath(); ctx.roundRect(0, 0, w, 64, 14); ctx.fill();
+  ctx.fillStyle = '#eef1f5'; ctx.textBaseline = 'middle'; ctx.fillText(text, 18, 34);
+  const s = new THREE.Sprite(new THREE.SpriteMaterial({ map: new THREE.CanvasTexture(c), depthTest: false }));
+  s.scale.set(size * w / 64, size, 1); s.position.set(x, y, z); s.renderOrder = 10; scene.add(s); labels.push(s); return s;
+}
+
+// ---------- elkarreragin daitezkeen objektuak ----------
+const pickables = [];
+function pick(mesh, id, name) { mesh.userData.id = id; mesh.userData.name = name; pickables.push(mesh); return mesh; }
+
+// tentsio ertaineko gelaxkak
+const cellX = [-.75, 0, .75], CZ = -2.3;
+const cellNames = ['Lerro-sarrera', 'Lerro-irteera', 'Trafo-babesa'];
+const target = {};
+cellX.forEach((x, i) => {
+  box(.66, 1.9, .55, M(0xb9bec6, { metalness: .35 }), x, .95, CZ);
+  box(.6, .5, .02, M(0x2f3640), x, .55, CZ + .285);                 // ikuspen-leihoa
+  label(cellNames[i] + ' (20 kV)', x, 2.05, CZ + .3, .09);
+  const lights = [0, 1, 2].map(k => {
+    const l = new THREE.Mesh(new THREE.SphereGeometry(.022, 16, 12), M(0x400000, { emissive: 0xff2a1a, emissiveIntensity: 2 }));
+    l.position.set(x - .1 + k * .1, 1.62, CZ + .29); scene.add(l); return l;
+  });
+  // eragintza-ardatza / palanka
+  const pivot = new THREE.Group(); pivot.position.set(x, 1.3, CZ + .3); scene.add(pivot);
+  const lever = box(.05, .26, .05, M(0x202020), 0, .1, .02, pivot);
+  box(.12, .12, .01, M(0xf2c200), x, 1.3, CZ + .28);
+  // faseak (leihoan)
+  const phases = [0, 1, 2].map(k => {
+    const p = cyl(.025, .18, M(0xc9822b, { metalness: .6, roughness: .35 }), x - .17 + k * .17, .55, CZ + .3);
+    return pick(p, i === 2 ? 'fase' : 'fase-bizia', 'Fasea ' + 'RST'[k]);
+  });
+  if (i === 2) {
+    Object.assign(target, { pivot, lights, phases, x });
+    pick(lever, 'etengailua', 'Etengailu-seksionatzailea');
+    const lp = new THREE.Mesh(new THREE.TorusGeometry(.04, .012, 10, 24), M(0x999999, { metalness: .7 }));
+    lp.position.set(x + .12, 1.22, CZ + .3); scene.add(lp); pick(lp, 'blokeo-puntua', 'Blokeo-puntua');
+    target.lockPoint = lp;
+  } else {
+    pick(lever, 'etengailu-bizia', 'Etengailua (beste gelaxka)');
+  }
+});
+label('Etengailua', target.x, 1.48, CZ + .32, .07);
+label('Faseak', target.x, .72, CZ + .32, .07);
+
+// lur-barra
+const earthBar = box(2.2, .04, .04, M(0x2e8b3a), 0, .12, CZ + .32);
+pick(earthBar, 'lur-barra', 'Lur-barra');
+label('Lur-barra', .9, .26, CZ + .34, .07);
+
+// transformadorea eta BT koadroa (finkoak)
+const trafo = box(.9, 1.3, .7, M(0x6b7b5a), -1.65, .65, -1.2);
+for (let i = 0; i < 6; i++) box(.02, 1.0, .72, M(0x55644a), -2.05 + i * .16, .7, -1.2);
+[-.25, 0, .25].forEach(dx => cyl(.04, .25, M(0xd8d2c4), -1.65 + dx, 1.42, -1.2));
+pick(trafo, 'trafo', 'Transformadorea');
+label('Transformadorea 630 kVA', -1.65, 1.75, -1.2, .09);
+const bt = box(.8, 1.0, .25, M(0x9aa3ad), 2.05, 1.2, -1.0); bt.rotation.y = -Math.PI / 2;
+pick(bt, 'bt', 'Behe-tentsioko koadroa');
+label('BT koadroa 400 V', 2.0, 1.85, -1.0, .09);
+
+// mahaia eta tresnak
+box(1.0, .05, .6, M(0x7a5a3a), 1.45, .8, .25);
+[[1.0, .0], [1.9, .0], [1.0, .5], [1.9, .5]].forEach(([x, z]) => box(.05, .8, .05, M(0x4a3a2a), x, .4, z));
+label('EPIak eta tresnak', 1.45, 1.35, .25, .09);
+const items = {
+  eskularruak: pick(box(.16, .05, .1, M(0xff8c1a), 1.1, .85, .1), 'eskularruak', 'Eskularru dielektrikoak'),
+  bisera: pick(box(.2, .12, .04, M(0x9fd3ff, { transparent: true, opacity: .7 }), 1.35, .89, .1), 'bisera', 'Arku-elektrikoaren aurkako bisera'),
+  giltzarrapoa: pick(box(.07, .09, .04, M(0xd62828), 1.6, .87, .1), 'giltzarrapoa', 'Giltzarrapoa + txartela'),
+  perka: pick(cyl(.02, .7, M(0xf2c200), 1.45, .86, .4), 'perka', 'Tentsio-detektagailua (perka)'),
+  'lur-ekipoa': pick(box(.22, .08, .14, M(0x3aa655), 1.8, .87, .12), 'lur-ekipoa', 'Lurrera konektatzeko ekipoa'),
+  zinta: pick(cyl(.07, .06, M(0xf5d000), 1.8, .86, .42), 'zinta', 'Mugatze-zinta eta seinalea'),
+};
+items.perka.rotation.z = Math.PI / 2;
+[['Eskularruak', 1.1, .1], ['Bisera', 1.35, .1], ['Giltzarrapoa', 1.6, .1], ['Lur-ekipoa', 1.8, .12], ['Perka', 1.45, .4], ['Zinta', 1.8, .42]].forEach(([t, x, z]) => label(t, x, .99, z, .05));
+const testerBox = pick(box(.1, .06, .1, M(0x333a44), 1.15, .86, .45), 'autoproba', 'Perkaren autoproba-gailua');
+label('Autoproba', 1.15, 1.0, .45, .06);
+
+// lan-eremua (lurrean)
+const zone = new THREE.Mesh(new THREE.PlaneGeometry(1.0, .7), new THREE.MeshBasicMaterial({ color: 0xf0b44c, transparent: true, opacity: .18 }));
+zone.rotation.x = -Math.PI / 2; zone.position.set(target.x, .005, CZ + .75); scene.add(zone);
+pick(zone, 'eremua', 'Lan-eremua');
+
+// geroago agertzen direnak
+const lockMesh = box(.07, .09, .04, M(0xd62828), target.x + .12, 1.17, CZ + .33); lockMesh.visible = false;
+const tag = box(.08, .11, .005, M(0xffffff), target.x + .12, 1.06, CZ + .33); tag.visible = false;
+const earthClamp = box(.06, .06, .06, M(0x3aa655), target.x, .12, CZ + .36); earthClamp.visible = false;
+const phaseClamps = target.phases.map(p => { const c = box(.05, .05, .05, M(0x3aa655), p.position.x, .45, CZ + .33); c.visible = false; return c; });
+const tape = new THREE.Group(); scene.add(tape); tape.visible = false;
+[[-.5, 0], [.5, 0]].forEach(([dx]) => cyl(.02, .9, M(0xd8d8d8), target.x + dx, .45, CZ + 1.1, tape));
+box(1.0, .05, .01, M(0xf5d000), target.x, .8, CZ + 1.1, tape);
+box(.3, .3, .01, M(0xf5d000), target.x, 1.05, CZ + 1.1, tape);
+
+// horma-panela (VR-n ere ikusgai)
+const pc = document.createElement('canvas'); pc.width = 1024; pc.height = 300;
+const panelTex = new THREE.CanvasTexture(pc);
+const panel = new THREE.Mesh(new THREE.PlaneGeometry(2.0, .58), new THREE.MeshBasicMaterial({ map: panelTex, transparent: true }));
+panel.position.set(-.35, 2.47, -2.55); scene.add(panel);
+
+// ---------- egoera ----------
+const STEPS = [
+  ['EPIak jantzi', 'Mahaitik hartu eskularru dielektrikoak eta bisera.'],
+  ['1. Moztu', 'Trafo-babeseko gelaxkako etengailu-seksionatzailea ireki (ebaketa ikusgarria).'],
+  ['2. Blokeatu eta seinaleztatu', 'Hartu giltzarrapoa eta jarri etengailuaren blokeo-puntuan.'],
+  ['3. Egiaztatu tentsiorik eza', 'Hartu perka, egin autoproba, eta ukitu 3 faseak.'],
+  ['4. Lurrera konektatu eta zirkuitulaburtu', 'Hartu lur-ekipoa: LEHENIK lur-barra, gero 3 faseak.'],
+  ['5. Seinaleztatu eta mugatu', 'Hartu zinta eta mugatu gelaxkaren aurreko lan-eremua.'],
+  ['Amaituta', 'Deskargoa eginda. Lana segurtasunez egin daiteke.'],
+];
+let S;
+function reset() {
+  S = { step: 0, gloves: false, visor: false, hand: null, autotest: false, verified: new Set(), earth: false,
+        grounded: new Set(), tension: true, errors: 0, warns: 0, t0: performance.now(), done: false };
+  Object.values(items).forEach(o => o.visible = true);
+  target.pivot.rotation.x = 0;
+  target.lights.forEach(l => l.material.emissiveIntensity = 2);
+  [lockMesh, tag, earthClamp, tape, ...phaseClamps].forEach(o => o.visible = false);
+  document.getElementById('end').style.display = 'none';
+  say('', ''); render();
+}
+
+// ---------- HUD ----------
+const $ = id => document.getElementById(id);
+function say(t, cls) { const m = $('msg'); m.textContent = t; m.className = cls; S && (S.msg = t, S.msgCls = cls); drawPanel(); }
+function render() {
+  const [t, h] = STEPS[S.step];
+  $('step').textContent = t; $('hint').textContent = h;
+  const chip = (txt, on) => `<span class="chip ${on ? 'on' : ''}">${txt}</span>`;
+  $('stat').innerHTML = chip('Eskularruak', S.gloves) + chip('Bisera', S.visor) +
+    chip('Eskuan: ' + (S.hand ? items[S.hand].userData.name : '—'), !!S.hand) + chip('Akatsak: ' + S.errors, false);
+  drawPanel();
+}
+function drawPanel() {
+  if (!S) return;
+  const g = pc.getContext('2d'); g.clearRect(0, 0, 1024, 300);
+  g.fillStyle = 'rgba(15,20,28,.9)'; g.beginPath(); g.roundRect(0, 0, 1024, 300, 24); g.fill();
+  g.fillStyle = '#6aa9ec'; g.font = '600 34px system-ui'; g.fillText('Urratsa ' + Math.min(S.step, 5) + '/5', 30, 52);
+  g.fillStyle = '#eef1f5'; g.font = '700 50px system-ui'; g.fillText(STEPS[S.step][0], 30, 115);
+  g.fillStyle = '#aab3c0'; g.font = '32px system-ui'; wrap(g, STEPS[S.step][1], 30, 165, 960, 38);
+  g.font = '600 32px system-ui'; g.fillStyle = S.msgCls === 'ko' ? '#ff6b5e' : S.msgCls === 'ok' ? '#7cc47f' : '#f0b44c';
+  wrap(g, S.msg || '', 30, 255, 960, 36);
+  panelTex.needsUpdate = true;
+}
+function wrap(g, txt, x, y, w, lh) {
+  let line = ''; for (const word of txt.split(' ')) { const t = line + word + ' '; if (g.measureText(t).width > w && line) { g.fillText(line, x, y); line = word + ' '; y += lh; } else line = t; } g.fillText(line, x, y);
+}
+
+// soinua
+let actx;
+function beep(f, d = .12, type = 'sine') {
+  try { actx ??= new AudioContext(); const o = actx.createOscillator(), v = actx.createGain(); o.type = type; o.frequency.value = f; v.gain.value = .08; o.connect(v).connect(actx.destination); o.start(); o.stop(actx.currentTime + d); } catch (e) {}
+}
+const ok = t => { say(t, 'ok'); beep(880); render(); };
+const warn = t => { S.warns++; say(t, 'warn'); beep(330, .15, 'square'); render(); };
+
+function critical(t) {
+  S.errors++;
+  say('AKATS KRITIKOA: ' + t, 'ko');
+  beep(110, .6, 'sawtooth');
+  arcLight.position.set(target.x, .8, CZ + .6); arcLight.intensity = 60;
+  scene.background.set(0xfff3c4); $('flash').style.opacity = .85;
+  setTimeout(() => { $('flash').style.opacity = 0; scene.background.copy(BG); arcLight.intensity = 0; }, 450);
+  const errs = S.errors, warns = S.warns, t0 = S.t0;
+  setTimeout(() => { reset(); S.errors = errs; S.warns = warns; S.t0 = t0; say('Arku elektrikoa simulatu da: ' + t + ' Berriro hasi zara.', 'ko'); render(); }, 2600);
+}
+const needEPI = () => { if (!(S.gloves && S.visor)) { warn('Lehenik EPIak jantzi: eskularru dielektrikoak eta bisera.'); return true; } return false; };
+
+function take(id) {
+  if (needEPI()) return;
+  if (S.hand) items[S.hand].visible = true;
+  S.hand = id; items[id].visible = false;
+  ok('Eskuan: ' + items[id].userData.name + '.');
+}
+
+// ---------- logika ----------
+function act(mesh) {
+  if (S.done) return;
+  const id = mesh.userData.id;
+  switch (id) {
+    case 'eskularruak': S.gloves = true; mesh.visible = false; if (S.visor) S.step = 1; ok('Eskularru dielektrikoak jantzita (zulorik ez dutela egiaztatuta).'); break;
+    case 'bisera': S.visor = true; mesh.visible = false; if (S.gloves) S.step = 1; ok('Bisera jantzita.'); break;
+    case 'giltzarrapoa': case 'perka': case 'lur-ekipoa': case 'zinta': take(id); break;
+    case 'trafo': say('Transformadorea: 20 kV → 400 V. Ez ukitu: tentsio ertainetik elikatzen da.', 'warn'); break;
+    case 'bt': say('Behe-tentsioko koadroa. Lan hau tentsio ertaineko gelaxkan da.', 'warn'); break;
+    case 'etengailu-bizia': warn('Gelaxka hau ez da lan-agindukoa. Trafo-babeseko gelaxkan lan egin behar da.'); break;
+    case 'fase-bizia': critical('Tentsiopean dagoen gelaxka bateko fasea ukitu duzu.'); break;
+    case 'etengailua':
+      if (needEPI()) return;
+      if (S.tension) { S.tension = false; S.step = Math.max(S.step, 2); target.pivot.rotation.x = -1.1; target.lights.forEach(l => l.material.emissiveIntensity = 0); ok('1. araua eginda: etengailua irekita, ebaketa ikusgarria. Tentsio-adierazleak itzalita… baina hori ez da nahikoa!'); }
+      else say('Etengailua irekita dago jada.', 'warn');
+      break;
+    case 'blokeo-puntua':
+      if (S.step < 2) return warn('Lehenik moztu (1. araua).');
+      if (S.hand !== 'giltzarrapoa') return warn('Giltzarrapoa behar duzu eskuan.');
+      if (S.step === 2) { lockMesh.visible = tag.visible = true; S.hand = null; S.step = 3; ok('2. araua eginda: blokeatuta eta "Ez maniobratu" txartela jarrita. Giltza zuk gordetzen duzu.'); }
+      break;
+    case 'autoproba':
+      if (S.hand !== 'perka') return warn('Perka behar duzu eskuan autoproba egiteko.');
+      S.autotest = true; ok('Perkaren autoproba ondo: seinalea entzun da. Orain faseak egiaztatu.'); break;
+    case 'lur-barra':
+      if (S.hand !== 'lur-ekipoa') return warn('Lur-ekipoa behar duzu eskuan.');
+      if (S.step < 4) return warn('Lehenik egiaztatu tentsiorik eza (3. araua).');
+      S.earth = true; earthClamp.visible = true; ok('Lur-pintza lur-barran konektatuta. Orain faseak.'); break;
+    case 'fase': {
+      const k = target.phases.indexOf(mesh);
+      if (S.tension) return critical('Tentsiopean dagoen fasea ukitu duzu (moztu gabe).');
+      if (S.hand === 'perka') {
+        if (S.step < 3) return warn('Lehenik blokeatu (2. araua).');
+        if (!S.autotest) return warn('Perkaren autoproba egin lehenik (autoproba-gailuan).');
+        S.verified.add(k); beep(660);
+        if (S.verified.size === 3 && S.step === 3) { S.step = 4; S.hand = null; items.perka.visible = true; ok('3. araua eginda: tentsiorik ez 3 faseetan.'); }
+        else say('Fasea ' + 'RST'[k] + ': tentsiorik ez. (' + S.verified.size + '/3)', 'ok');
+        return render();
+      }
+      if (S.hand === 'lur-ekipoa') {
+        if (S.step < 4) return critical('Tentsiorik eza egiaztatu gabe lurrera konektatu duzu.');
+        if (!S.earth) return critical('Faseak lurra baino lehen konektatu dituzu: lehenik lur-barra!');
+        S.grounded.add(k); phaseClamps[k].visible = true; beep(660);
+        if (S.grounded.size === 3 && S.step === 4) { S.step = 5; S.hand = null; ok('4. araua eginda: lurrera konektatuta eta zirkuitulaburtuta.'); }
+        else say('Fasea ' + 'RST'[k] + ' lurrera konektatuta. (' + S.grounded.size + '/3)', 'ok');
+        return render();
+      }
+      if (S.step < 5) return critical('Fasea esku hutsez ukitu duzu, egiaztatu eta lurrera konektatu gabe.');
+      say('Fasea segurtasunez manipula daiteke.', 'ok'); break;
+    }
+    case 'eremua':
+      if (S.hand !== 'zinta') return warn('Zinta behar duzu eskuan.');
+      if (S.step < 5) return warn('Lan-eremua azkenik seinaleztatzen da (5. araua).');
+      tape.visible = true; S.hand = null; S.step = 6; S.done = true; ok('5. araua eginda: lan-eremua mugatuta eta seinaleztatuta.');
+      finish(); break;
+  }
+  render();
+}
+
+function finish() {
+  const s = Math.round((performance.now() - S.t0) / 1000);
+  $('report').innerHTML = `<p>5 urrezko arauak ordena zuzenean aplikatu dituzu.</p>
+  <ul><li>Denbora: <strong>${Math.floor(s / 60)} min ${s % 60} s</strong></li>
+  <li>Akats kritikoak: <strong>${S.errors}</strong></li><li>Abisuak: <strong>${S.warns}</strong></li></ul>
+  <p style="color:#aab3c0">Gogoratu: zerbitzua berrezartzeko, alderantzizko ordena (5 → 1).</p>`;
+  if (!renderer.xr.isPresenting) $('end').style.display = 'flex';
+}
+
+// ---------- hautaketa: sagua / ukimena ----------
+const ray = new THREE.Raycaster(); const ndc = new THREE.Vector2();
+const visiblePick = () => pickables.filter(o => o.visible);
+function hitFromScreen(e) {
+  const r = renderer.domElement.getBoundingClientRect();
+  ndc.set(((e.clientX - r.left) / r.width) * 2 - 1, -((e.clientY - r.top) / r.height) * 2 + 1);
+  ray.setFromCamera(ndc, camera); return ray.intersectObjects(visiblePick(), false)[0];
+}
+let down = null, hovered = null;
+renderer.domElement.addEventListener('pointerdown', e => down = [e.clientX, e.clientY]);
+renderer.domElement.addEventListener('pointerup', e => {
+  if (!down || Math.hypot(e.clientX - down[0], e.clientY - down[1]) > 6) return;
+  const h = hitFromScreen(e); if (h) act(h.object);
+});
+renderer.domElement.addEventListener('pointermove', e => {
+  if (e.pointerType !== 'mouse') return;
+  const h = hitFromScreen(e); setHover(h ? h.object : null);
+});
+function setHover(o) {
+  if (hovered === o) return;
+  if (hovered && hovered.material.emissive) hovered.material.emissive.setHex(hovered.userData.em ?? 0);
+  hovered = o; renderer.domElement.style.cursor = o ? 'pointer' : '';
+  if (o && o.material.emissive) { o.userData.em ??= o.material.emissive.getHex(); o.material.emissive.setHex(0x334455); $('info').textContent = o.userData.name; }
+}
+
+// ---------- WebXR kontroladoreak ----------
+const tmp = new THREE.Matrix4();
+for (let i = 0; i < 2; i++) {
+  const c = renderer.xr.getController(i);
+  const line = new THREE.Line(new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(), new THREE.Vector3(0, 0, -4)]), new THREE.LineBasicMaterial({ color: 0x6aa9ec }));
+  c.add(line);
+  c.addEventListener('select', () => {
+    tmp.identity().extractRotation(c.matrixWorld);
+    ray.ray.origin.setFromMatrixPosition(c.matrixWorld);
+    ray.ray.direction.set(0, 0, -1).applyMatrix4(tmp);
+    const h = ray.intersectObjects(visiblePick(), false)[0];
+    if (h) act(h.object);
+  });
+  scene.add(c);
+}
+renderer.xr.addEventListener('sessionstart', () => { controls.enabled = false; $('end').style.display = 'none'; });
+renderer.xr.addEventListener('sessionend', () => { controls.enabled = true; if (S.done) finish(); });
+
+// ---------- botoiak ----------
+$('bReset').onclick = reset; $('bAgain').onclick = reset;
+$('bLabels').onclick = e => { const on = labels[0].visible = !labels[0].visible; labels.forEach(l => l.visible = on); e.target.textContent = 'Etiketak: ' + (on ? 'bai' : 'ez'); e.target.setAttribute('aria-pressed', on); };
+
+addEventListener('resize', () => { camera.aspect = innerWidth / innerHeight; camera.updateProjectionMatrix(); renderer.setSize(innerWidth, innerHeight); });
+renderer.setAnimationLoop(() => { controls.update(); renderer.render(scene, camera); });
+
+reset();
+window.__sim = { act: id => act(pickables.find(p => p.userData.id === id && p.visible) || pickables.find(p => p.userData.id === id)), phase: (id, k) => act(pickables.filter(p => p.userData.id === id)[k]), state: () => S };
+</script>
+</body>
+</html>

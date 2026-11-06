@@ -1,0 +1,231 @@
+<!doctype html>
+<html lang="eu">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Transformazio-zentroko deskargoa VR-n</title>
+<meta name="description" content="Ingurune inmersibo baterako prozesuaren gidoia: transformazio-zentro bateko deskargoa, 5 urrezko arauak eta larrialdi-egoera.">
+<style>
+:root{--bg:#ffffff;--fg:#1d2433;--muted:#5a6475;--accent:#0b5cad;--accent2:#c27c00;--line:#d8dde6;--card:#f5f7fa;--ok:#2e7d32;--ko:#b3261e}
+@media (prefers-color-scheme: dark){:root{--bg:#12161d;--fg:#e6e9ef;--muted:#a3acbb;--accent:#6aa9ec;--accent2:#f0b44c;--line:#2c3440;--card:#1a2029;--ok:#7cc47f;--ko:#f08a82}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font:17px/1.6 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+main{max-width:920px;margin:0 auto;padding:24px 16px 64px}
+h1{font-size:1.8rem;line-height:1.25;margin:.2em 0}
+h2{font-size:1.35rem;margin:2.2em 0 .5em;padding-bottom:.25em;border-bottom:2px solid var(--line)}
+h3{font-size:1.1rem;margin:1.6em 0 .4em;color:var(--accent)}
+p,li{max-width:75ch}
+.lead{color:var(--muted);font-size:1.05rem}
+.meta{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0 0}
+.tag{background:var(--card);border:1px solid var(--line);border-radius:999px;padding:2px 12px;font-size:.9rem}
+.card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:14px 18px;margin:12px 0}
+table{width:100%;border-collapse:collapse;margin:10px 0;font-size:.95rem}
+th,td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}
+th{background:var(--card)}
+.scroll{overflow-x:auto}
+.ok{color:var(--ok);font-weight:600}.ko{color:var(--ko);font-weight:600}
+figure{margin:16px 0}
+figcaption{color:var(--muted);font-size:.9rem;margin-top:6px}
+svg text{font-family:system-ui,sans-serif}
+footer{margin-top:48px;padding-top:16px;border-top:1px solid var(--line);color:var(--muted);font-size:.9rem}
+a{color:var(--accent)}
+</style>
+</head>
+<body>
+<main>
+
+<header>
+<p class="lead">3.B · Ingurune inmersiboetarako prozesu bat · Gidoia</p>
+<h1>Transformazio-zentro bateko deskargoa: 5 urrezko arauak eta larrialdi-egoera, errealitate birtualean</h1>
+<div class="meta"><span class="tag">Egilea: Mikel Aldalur</span><span class="tag">Lizentzia: CC BY-NC-SA 4.0</span><span class="tag">Errealitate birtuala (VR)</span></div>
+</header>
+
+<div class="card" style="border-color:var(--accent)">
+<p><strong>Prototipo interaktiboa:</strong> prozesuaren lehen bertsio bat (1. maila: deskargoa eta 5 urrezko arauak), nabigatzailean eta VR betaurrekoetan (WebXR) erabiltzeko.</p>
+<p><a href="vr/"><strong>▶ Ireki transformazio-zentroa (Three.js · WebXR)</strong></a> — ordenagailua/mugikorra: klik edo ukitu objektuetan; VR betaurrekoak: "VR-n sartu" eta kontroladorearen katua.</p>
+</div>
+
+<h2>1. Zikloaren izena</h2>
+<p><strong>Automatizazio eta Robotika Industriala</strong> — Goi-mailako heziketa-zikloa (Elektrizitatea eta Elektronika lanbide-arloa).</p>
+
+<h2>2. Prozesuaren azalpen laburra</h2>
+<p>Ikasleak tentsio ertaineko <strong>transformazio-zentro</strong> batean sartzen dira, birtualki, mantentze-lan bat egiteko <strong>deskargoa</strong> egitera: lan-agindua irakurri, babes-ekipamendua (EPI) jantzi, eta <strong>5 urrezko arauak</strong> ordena zuzenean aplikatu (moztu, blokeatu, tentsiorik eza egiaztatu, lurrera konektatu eta zirkuitulaburtu, seinaleztatu). Lana amaitzean, zerbitzua berrezartzen dute alderantzizko ordenan. Maila aurreratuan, <strong>larrialdi-egoera</strong> bat gertatzen da (lankide bat elektrokutatuta) eta ikasleak erreskate-protokoloa aplikatu behar du.</p>
+
+<h2>3. Ikaskuntza-helburuak</h2>
+<h3>Garatu nahi diren gaitasunak</h3>
+<ul>
+<li>Transformazio-zentro baten elementuak identifikatzea (gelaxkak, transformadorea, behe-tentsioko koadroa, lur-sarea) eta haien funtzioa ulertzea.</li>
+<li>Tentsiorik gabe lan egiteko 5 urrezko arauak (RD 614/2001, II. eranskina) ordenan eta zehatz aplikatzea.</li>
+<li>Lan bakoitzerako EPI egokiak aukeratzea eta egiaztatzea (eskularru dielektrikoak, arku-elektrikoaren aurkako bisera eta arropa, segurtasun-oinetakoak).</li>
+<li>Neurketa- eta babes-ekipoak zuzen erabiltzea: tentsio-detektagailua (perka) eta lurrera konektatzeko ekipo eramangarria.</li>
+<li>Larrialdi elektriko batean modu seguruan jardutea: tentsioa moztu, ez ukitu, 112ra deitu, oinarrizko bizi-euskarria.</li>
+<li>Lan-agindua eta deskargo-dokumentua interpretatu eta betetzea; lantaldearekin komunikatzea.</li>
+</ul>
+
+<h2>4. Ingurune inmersibora eramatearen abantailak</h2>
+<h3>a. Zein mugari lotuta dago eta zergatik</h3>
+<div class="scroll"><table>
+<thead><tr><th>Muga</th><th>Zergatik prozesu honetan</th></tr></thead>
+<tbody>
+<tr><td><strong>Ekipamendua</strong></td><td>Transformazio-zentro bat ezin da gelan eduki: tamaina, kostua eta tentsio ertaina (20 kV). Ikastetxeko tailerrak behe-tentsioko koadroak baino ez ditu.</td></tr>
+<tr><td><strong>Segurtasuna</strong></td><td>Tentsio ertainean akats batek heriotza ekar dezake. Ikasle berriek ezin dute benetako zentro batean maniobrarik egin, eta arku elektrikoa edo elektrokuzio-larrialdia ezin dira modu seguruan probokatu.</td></tr>
+<tr><td><strong>Ikusgarritasuna</strong></td><td>Gelaxken barrukoa (seksionatzaileen kontaktuak, lurrera konexioa) ez da ikusten. Arku elektrikoa milisegundotan gertatzen da.</td></tr>
+<tr><td><strong>Errepikagarritasuna</strong></td><td>Enpresa batera egindako bisita bakar batean ezin da maniobra errepikatu. Ikasle bakoitzak behar adina aldiz egin behar du automatismoa lortzeko.</td></tr>
+<tr><td><strong>Espazioa eta denbora</strong></td><td>Zentroak sarbide mugatua dute (enpresa elektrikoaren baimena) eta ordutegiak ez datoz bat eskola-ordutegiarekin.</td></tr>
+</tbody></table></div>
+
+<h3>b. Zer ekarpen egiten du modu tradizionalaren aldean</h3>
+<ul>
+<li><strong>Egitea, ez ikustea:</strong> bideo edo argazkiekin ikasleak ikusle dira; VR-n eskuekin egiten dute maniobra bakoitza, eta ordena okerrak ondorioak ditu.</li>
+<li><strong>Akatsetik ikastea arriskurik gabe:</strong> akats kritiko batek (adib. tentsiorik eza egiaztatu gabe lurrera konektatzea) arku elektrikoaren simulazioa eta azalpena eragiten ditu, inor arriskuan jarri gabe.</li>
+<li><strong>Errepikapen mugagabea</strong> eta zailtasun-mailak: gidatua → erdi-gidatua → autonomoa ustekabeekin.</li>
+<li><strong>Ikusezina ikusgai:</strong> geruza didaktikoak barruko kontaktuak, korrontearen ibilbidea eta lurrera konexioa erakusten ditu.</li>
+<li><strong>Ebaluazio objektiboa:</strong> sistemak urrats bakoitza, ordena, denbora eta akatsak erregistratzen ditu (xAPI → Moodle), eta irakasleak datuetan oinarritutako feedbacka ematen du.</li>
+<li><strong>Larrialdiak entrenatzea:</strong> estresaren pean erabakiak hartzea, benetako egoeran ezinezkoa dena.</li>
+</ul>
+
+<h2>5. Proposamenaren diseinua</h2>
+
+<h3>a. Lanerako esparrua</h3>
+<div class="card">
+<p><strong>Elementu finkoak</strong></p>
+<ul>
+<li>Transformazio-zentro aurrefabrikatua (barneko neurriak ~ 4 × 2,5 × 2,5 m): sarbide-atea, aireztapen-saretak eta larrialdi-argia.</li>
+<li>Tentsio ertaineko 3 gelaxka (20 kV): lerro-sarrera, lerro-irteera eta transformadorearen babes-gelaxka (fusibleekin). Bakoitzak etengailu-seksionatzailea, lurrera konektatzeko seksionatzailea, presentzia-tentsioaren adierazleak eta eragintza-palankaren sarrera.</li>
+<li>Transformadorea (630 kVA, 20 kV / 400 V), olio-bilketa ontziarekin.</li>
+<li>Behe-tentsioko koadroa, irteera-fusibleekin.</li>
+<li>Lur-sarea eta lurrera konektatzeko puntuak (barra eta borneak).</li>
+<li>Segurtasun-kartelak, eskema unifilarra horman, eta lehen sorospenetako kaxa.</li>
+</ul>
+<p><strong>Interakziorako elementu nagusiak</strong></p>
+<ul>
+<li>Gelaxken eragintza-palanka eta seksionatzaileak.</li>
+<li>Blokeo-giltzarrapoak eta "Ez maniobratu" txartelak.</li>
+<li>Tentsio ertaineko tentsio-detektagailua (perka).</li>
+<li>Lurrera konektatzeko eta zirkuitulaburtzeko ekipo eramangarria.</li>
+<li>Lan-eremua mugatzeko zinta eta seinaleak.</li>
+<li>Tableta birtuala: lan-agindua, eskema unifilarra eta deskargo-dokumentua.</li>
+</ul>
+<p><strong>Inguruneko baldintzak</strong></p>
+<ul>
+<li>Argiztapen mugatua: zentroko argia ahula da; linterna edo kaskoko argia erabili behar da.</li>
+<li>Transformadorearen burrunba (soinu-giroa) eta aireztapenaren zarata.</li>
+<li>Aukerako egoerak: lurzoru hezea (eurizko eguna) eta beroa, arriskua handitzen dutenak.</li>
+</ul>
+</div>
+
+<h3>b. Objektu interaktiboak</h3>
+<div class="scroll"><table>
+<thead><tr><th>Objektua</th><th>Ezaugarriak (tamaina · pisua · materiala)</th><th>Ezaugarri dinamikoak</th><th>Interakzioak</th></tr></thead>
+<tbody>
+<tr><td>Eskularru dielektrikoak</td><td>Eskuen neurria · 0,3 kg · latexa</td><td>Hauskorra: zulo bat izan dezakete (aurretik egiaztatu behar dira)</td><td>Heldu, aztertu (puztu), jantzi</td></tr>
+<tr><td>Arku-elektrikoaren aurkako bisera</td><td>Buruaren neurria · 0,5 kg · polikarbonatoa</td><td>—</td><td>Heldu, jantzi, jaitsi/igo</td></tr>
+<tr><td>Eragintza-palanka</td><td>60 cm · 1,2 kg · altzairu isolatua</td><td>Biraketa-mugak (90°)</td><td>Heldu, txertatu, biratu, atera</td></tr>
+<tr><td>Giltzarrapoa + txartela</td><td>8 cm · 0,2 kg · altzairua / plastikoa</td><td>Giltza bakarra</td><td>Heldu, jarri, itxi, giltza gorde</td></tr>
+<tr><td>Tentsio-detektagailua (perka)</td><td>1,5 m · 1,5 kg · zuntz isolatzailea</td><td>Argi- eta soinu-seinalea; autoproba</td><td>Heldu, autoproba sakatu, kontaktua egin</td></tr>
+<tr><td>Lurrera konektatzeko ekipoa</td><td>3 pintza + kableak 3 m · 4 kg · kobrea / aluminioa</td><td>Kable malguak (fisika)</td><td>Heldu, lurrera lehenik konektatu, faseetara konektatu, askatu</td></tr>
+<tr><td>Mugatze-zinta eta seinaleak</td><td>Zinta 10 m · seinalea 40 cm · plastikoa</td><td>Zinta deformagarria</td><td>Heldu, zabaldu, lotu, kokatu</td></tr>
+<tr><td>Tableta (lan-agindua)</td><td>25 cm · 0,5 kg</td><td>—</td><td>Heldu, irakurri, sakatu, sinatu</td></tr>
+<tr><td>Desfibriladorea (DEA) — larrialdia</td><td>30 cm · 2 kg · plastikoa</td><td>Ahots-jarraibideak</td><td>Heldu, ireki, elektrodoak jarri, sakatu</td></tr>
+</tbody></table></div>
+
+<h3>c. Erabiltzailearen akzioak</h3>
+<ul>
+<li><strong>Onartutako mugimenduak:</strong> espazioan ibili (gela-eskala edo teleportazioa zorabioak saihesteko), makurtu (behe-tentsioko koadroa eta lurrera konexioko borneak behean daude), burua biratu, besoa luzatu.</li>
+<li><strong>Oinarrizko interakzioak:</strong> heldu, askatu, sakatu, biratu, txertatu, konektatu eta bi eskuekin heldu (perka eta palanka).</li>
+<li><strong>Murrizketak:</strong> ezin da gelaxkarik ireki tentsioa egonez gero (blokeo mekanikoak, errealitatean bezala), eta EPIrik gabe sistemak abisua ematen du.</li>
+</ul>
+
+<h3>d. Interfazea</h3>
+<ul>
+<li><strong>Etengabe ikusgai:</strong> uneko urratsa (adib. "3/5 Egiaztatu tentsiorik eza"), jantzitako EPIen ikonoak, denbora, eta zailtasun-maila. Maila aurreratuan urratsaren laguntza ezkutatzen da.</li>
+<li><strong>Menu eta kontrol-panelak:</strong> tableta birtuala (lan-agindua, eskema unifilarra, deskargo-dokumentua), eta eskumuturreko menua (pausa, laguntza, geruza didaktikoa piztu/itzali, irten).</li>
+<li><strong>Atzeraelikadura:</strong> kontroladorearen bibrazioa (haptika) objektuak heltzean eta konexioak egitean; soinuak (perkaren seinalea, giltzarrapoaren klika); koloreak (urrats zuzena berdea, arriskua laranja); akats kritikoan simulazioa gelditu, arku elektrikoaren efektua eta zer gertatu den azaldu; amaieran txosten bat (urratsak, ordena, akatsak, denbora).</li>
+<li><strong>Irisgarritasuna:</strong> azpitituluak ahots-jarraibide guztietan, euskaraz; eserita jokatzeko modua; testu-tamaina doigarria; kolore-kodeaz gain ikonoak.</li>
+</ul>
+
+<h3>e. Ikaskuntza-sekuentzia</h3>
+<figure>
+<svg viewBox="0 0 880 470" width="100%" role="img" aria-labelledby="dtit ddesc">
+<title id="dtit">Prozesuaren diagrama</title>
+<desc id="ddesc">Prestaketa, sarrera, 5 urrezko arauak ordenan, lana, zerbitzua berrezartzea eta amaiera. Urrats bakoitzaren ondoren kontrol-puntu bat dago; akats kritikoak debriefing-era eta berriro hastera eramaten du. 3. mailan larrialdi-adar bat dago.</desc>
+<defs><marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0L10,5L0,10z" fill="currentColor"/></marker></defs>
+<g style="color:var(--fg)" font-size="14">
+<g fill="var(--card)" stroke="var(--accent)" stroke-width="2">
+<rect x="10" y="20" width="150" height="56" rx="8"/><rect x="190" y="20" width="150" height="56" rx="8"/>
+<rect x="10" y="130" width="150" height="56" rx="8"/><rect x="190" y="130" width="150" height="56" rx="8"/><rect x="370" y="130" width="150" height="56" rx="8"/><rect x="550" y="130" width="150" height="56" rx="8"/><rect x="730" y="130" width="140" height="56" rx="8"/>
+<rect x="550" y="250" width="150" height="56" rx="8"/><rect x="730" y="250" width="140" height="56" rx="8"/><rect x="730" y="370" width="140" height="56" rx="8"/>
+</g>
+<g fill="var(--fg)" text-anchor="middle">
+<text x="85" y="44">Prestaketa</text><text x="85" y="63" font-size="12" fill="var(--muted)">lan-agindua · EPIak</text>
+<text x="265" y="44">Sarrera</text><text x="265" y="63" font-size="12" fill="var(--muted)">ikuskatu · eskema</text>
+<text x="85" y="154">1. Moztu</text><text x="85" y="173" font-size="12" fill="var(--muted)">ebaketa ikusgarria</text>
+<text x="265" y="154">2. Blokeatu</text><text x="265" y="173" font-size="12" fill="var(--muted)">giltzarrapoa · txartela</text>
+<text x="445" y="154">3. Egiaztatu</text><text x="445" y="173" font-size="12" fill="var(--muted)">tentsiorik eza (perka)</text>
+<text x="625" y="154">4. Lurrera</text><text x="625" y="173" font-size="12" fill="var(--muted)">+ zirkuitulaburtu</text>
+<text x="800" y="154">5. Seinaleztatu</text><text x="800" y="173" font-size="12" fill="var(--muted)">eremua mugatu</text>
+<text x="625" y="274">Berrezarri</text><text x="625" y="293" font-size="12" fill="var(--muted)">alderantzizko ordena</text>
+<text x="800" y="274">Lana</text><text x="800" y="293" font-size="12" fill="var(--muted)">mantentze-lana</text>
+<text x="800" y="394">Amaiera</text><text x="800" y="413" font-size="12" fill="var(--muted)">txostena · xAPI</text>
+</g>
+<g stroke="currentColor" stroke-width="1.6" fill="none" marker-end="url(#ar)">
+<path d="M160 48H186"/><path d="M265 76V100H85V126"/>
+<path d="M160 158H186"/><path d="M340 158H366"/><path d="M520 158H546"/><path d="M700 158H726"/>
+<path d="M800 186V246"/><path d="M730 278H704"/><path d="M625 306V398H726"/>
+</g>
+<g fill="var(--accent2)"><circle cx="173" cy="158" r="5"/><circle cx="353" cy="158" r="5"/><circle cx="533" cy="158" r="5"/><circle cx="713" cy="158" r="5"/><circle cx="800" cy="216" r="5"/></g>
+<g stroke="var(--ko)" stroke-width="2" fill="none" stroke-dasharray="6 4"><rect x="10" y="250" width="330" height="56" rx="8"/><path d="M445 186V278H344" marker-end="url(#ar)" style="color:var(--ko)"/></g>
+<text x="175" y="274" text-anchor="middle" fill="var(--ko)">Akats kritikoa → simulazioa gelditu</text>
+<text x="175" y="293" text-anchor="middle" font-size="12" fill="var(--muted)">arku-efektua · azalpena · berriro hasi</text>
+<g stroke="var(--accent2)" stroke-width="2" fill="none" stroke-dasharray="6 4"><rect x="10" y="370" width="330" height="56" rx="8"/><path d="M800 306V330H175V366" marker-end="url(#ar)" style="color:var(--accent2)"/></g>
+<text x="175" y="394" text-anchor="middle" fill="var(--accent2)">3. maila: larrialdia (elektrokuzioa)</text>
+<text x="175" y="413" text-anchor="middle" font-size="12" fill="var(--muted)">moztu · ez ukitu · 112 · DEA</text>
+<circle cx="380" cy="455" r="5" fill="var(--accent2)"/><text x="392" y="460" font-size="12" fill="var(--muted)">kontrol-puntua</text>
+</g>
+</svg>
+<figcaption>Prozesuaren diagrama. Puntu horiak kontrol-momentuak dira; marra gorria akats kritikoaren ibilbidea, eta laranja 3. mailako larrialdi-adarra.</figcaption>
+</figure>
+
+<h3>Etapak eta zailtasuna</h3>
+<div class="scroll"><table>
+<thead><tr><th>Etapa</th><th>Zer egiten du ikasleak</th><th>Zailtasuna</th></tr></thead>
+<tbody>
+<tr><td>0. Ezagutza</td><td>Zentroan libre ibili, elementuak ezagutu geruza didaktikoarekin (etiketak, barruko ikuspegia).</td><td>Erraza</td></tr>
+<tr><td>1. Prestaketa</td><td>Lan-agindua irakurri, EPIak aukeratu eta egiaztatu (eskularruen zuloak).</td><td>Erraza</td></tr>
+<tr><td>2. Deskargoa (5 arauak)</td><td>Maniobrak ordenan, eskema unifilarra kontsultatuz. 1. mailan urrats bakoitza adierazten da.</td><td>Ertaina</td></tr>
+<tr><td>3. Lana eta berrezartzea</td><td>Mantentze-lana (fusiblea aldatu), eta zerbitzua berrezarri alderantzizko ordenan.</td><td>Ertaina</td></tr>
+<tr><td>4. Ustekabeak (2. maila)</td><td>Perkaren autoproba huts egiten du, giltzarrapo bat falta da, lur-ekipoaren pintza hondatuta…</td><td>Zaila</td></tr>
+<tr><td>5. Larrialdia (3. maila)</td><td>Lankide bat elektrokutatuta: tentsioa moztu, ez ukitu, 112, DEA eta bizi-euskarria.</td><td>Oso zaila</td></tr>
+</tbody></table></div>
+
+<h3>Kontrol-momentuak</h3>
+<ul>
+<li>Sartu aurretik: EPI guztiak jantzita eta egiaztatuta.</li>
+<li>Arau bakoitzaren ondoren: sistemak ordena eta egoera egiaztatzen ditu; 1-2 mailetan atzeraelikadura berehalakoa da.</li>
+<li>Perkaren autoproba neurtu aurretik eta ondoren egin den.</li>
+<li>Lurrera konektatzean: lehenik lurrera, gero faseetara (eta kentzean, alderantziz).</li>
+<li>Saio amaieran: txostena eta debriefing-a irakaslearekin (zer egin duzu, zergatik, zer aldatuko zenuke).</li>
+</ul>
+
+<h3>Prozesuaren amaiera-baldintzak</h3>
+<ul>
+<li><span class="ok">Arrakasta:</span> 5 arauak ordenan, EPIak jantzita, lana eginda eta zerbitzua zuzen berrezarrita, akats kritikorik gabe. Hurrengo maila desblokeatzen da.</li>
+<li><span class="ko">Akats kritikoa:</span> tentsiopean dagoen elementu bat ukitzea, tentsiorik eza egiaztatu gabe lurrera konektatzea edo EPIrik gabe maniobratzea. Simulazioa gelditu, ondorioak erakutsi eta berriro hasi.</li>
+<li><strong>Denbora-muga</strong> (2-3 mailetan): benetako lan-baldintzak simulatzeko.</li>
+<li>Emaitzak (urratsak, akatsak, denbora) xAPI bidez Moodlera bidaltzen dira, ebaluazio formatiborako.</li>
+</ul>
+
+<h2>Inplementazioa eta irisgarritasuna</h2>
+<ul>
+<li><strong>Gailuak:</strong> betaurreko autonomoak (adib. 4 betaurreko gelako 16 ikasleentzat, txandaka). Gainerako ikasleek proiekzioan jarraitzen dute behatzaile-orri batekin (urratsak eta akatsak apuntatu), eta gero rolak aldatzen dira.</li>
+<li><strong>Betaurrekorik gabe:</strong> 360°-ko bertsio sinplifikatua nabigatzailean (ordenagailua edo mugikorra), ikasle guztiek parte hartu ahal izateko eta zorabioak dituztenentzat.</li>
+<li><strong>Saioak:</strong> 15-20 minutu betaurrekoekin, gehienez, atsedenekin.</li>
+<li><strong>Datu-babesa:</strong> txostenak ikaslearen kodearekin, izenik gabe, ikastetxeko Moodlen.</li>
+</ul>
+
+<footer>
+<p>© Mikel Aldalur · <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.eu">CC BY-NC-SA 4.0</a>. Gidoiaren egitura: "3.B Ingurune inmersiboetarako prozesu bat proposatu – GIDOIA", Eusko Jaurlaritzaren Lanbide Heziketako Sailburuordetza (CC BY-NC-SA 4.0).</p>
+</footer>
+</main>
+</body>
+</html>
