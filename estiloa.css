@@ -1,0 +1,36 @@
+:root{--bg:#ffffff;--fg:#1d2433;--muted:#5a6475;--accent:#0b5cad;--line:#d8dde6;--card:#f5f7fa}
+@media (prefers-color-scheme: dark){:root{--bg:#12161d;--fg:#e6e9ef;--muted:#a3acbb;--accent:#6aa9ec;--line:#2c3440;--card:#1a2029}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font:17px/1.6 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+main{max-width:1040px;margin:0 auto;padding:24px 16px 64px}
+h1{font-size:1.8rem;line-height:1.25;margin:.2em 0}
+h2{font-size:1.35rem;margin:2.2em 0 .7em;padding-bottom:.25em;border-bottom:2px solid var(--line)}
+p{max-width:75ch}
+a{color:var(--accent)}
+.lead{color:var(--muted);font-size:1.05rem;margin:0}
+.muted{color:var(--muted);font-size:.95rem}
+.small{font-size:.95rem}
+.crumb{margin:0 0 12px}
+.meta{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0 0}
+.tag{background:var(--card);border:1px solid var(--line);border-radius:999px;padding:2px 12px;font-size:.9rem}
+.code{display:inline-block;min-width:2.6em;text-align:center;font-weight:700;font-size:.85rem;color:var(--accent);background:var(--card);border:1px solid var(--line);border-radius:6px;padding:0 6px}
+
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:16px}
+.vcard{display:flex;flex-direction:column;background:var(--card);border:1px solid var(--line);border-radius:10px;overflow:hidden;color:inherit;text-decoration:none;transition:border-color .15s,transform .15s}
+.vcard:hover,.vcard:focus-visible{border-color:var(--accent);transform:translateY(-2px)}
+.thumb{position:relative;display:block;aspect-ratio:16/9;background:#000}
+.thumb img{width:100%;height:100%;object-fit:cover;display:block}
+.dur{position:absolute;right:8px;bottom:8px;background:rgba(0,0,0,.75);color:#fff;font-size:.8rem;padding:1px 7px;border-radius:4px}
+.vbody{display:flex;flex-direction:column;gap:4px;padding:10px 14px 14px;line-height:1.35}
+.vbody .code{align-self:flex-start}
+
+.list{list-style:none;padding:0;margin:0}
+.list li{padding:10px 0;border-bottom:1px solid var(--line)}
+.list li:last-child{border-bottom:0}
+
+.player{margin:20px 0;background:#000;border-radius:10px;overflow:hidden}
+.player video{display:block;width:100%;max-height:80vh;aspect-ratio:16/9}
+.pager{display:flex;justify-content:space-between;gap:16px;margin-top:32px;padding-top:16px;border-top:1px solid var(--line);font-size:.95rem}
+.pager a:last-child{text-align:right}
+
+footer{margin-top:48px;padding-top:16px;border-top:1px solid var(--line);color:var(--muted);font-size:.9rem}
